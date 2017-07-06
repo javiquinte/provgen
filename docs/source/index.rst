@@ -14,65 +14,16 @@ B2SAFE functions
 ================
 
 * EUDATiCHECKSUMretrieve(*path, *checksum, *modtime)
-Set the checksum if needed and update the timestamp also.
+Set the checksum if needed and update the timestamp of the modification also. Three things are available: the full path of the file, the final checksum and the modification time of the checksum. We also know if the checksum has been updated or just read. The latter should not produce any provenance information.
 
-* EUDATrp_transferInitiated( *source )
-Set the initiation of transfer.
+* EUDATReplication(*source, *destination, *registered, *recursive, *response)
+Replicate the source to the destination. The parameter registered determines whether the file has a PID which needs to be updated or not. Variable response contains a string with the result of the operation.
 
-* EUDATrp_transferFinished( *source )
-Set the finalization of a transfer.
+* EUDATPIDRegistration(*source, *destination, *notification, *registration_response)
+Verify that a PID exist for a given path and optionally create it if not found.
 
-* EUDATrp_ingestObject
-From the higher view perspective the EUDATrp_ingestObject function is driving
-the archival process of data. ::
-
-    # Manage the ingestion in B2SAFE
-    # Check the checksum
-    # Create PID
-    #
-    # Parameters:
-    # *source [IN] target object to assign a PID
-    #
-    # Author: Stephane Coutin (CINES)
-    # updated : Stéphane Coutin (CINES)
-    # 23/10/14 (use EUDATiCHECKSUMget to avoid duplicate checksum calculation)
-    #-----------------------------------------------------------------------------
-    EUDATrp_ingestObject( *source )
-    {
-        rp_getRpIngestParameters(*protectArchive, *archiveOwner);
-        logInfo("ingestObject-> Check for (*source)");
-        EUDATiCHECKSUMget(*source, *checksum, *modtime);
-        EUDATCreateAVU("INFO_Checksum", *checksum, *source);
-    # Modified begin
-        EUDATgetLastAVU(*source, "OTHER_original_checksum", *orig_checksum);
-    # Modified end
-        if ( *checksum == *orig_checksum )
-        {
-            logInfo("ingestObject-> Checksum is same as original = *checksum");
-            EUDATCreateAVU("ADMIN_Status", "Checksum_ok", *source);
-    	EUDATgetLastAVU( *source, "EUDAT/ROR" , *RorValue );
-            EUDATCreatePID("None", *source, *RorValue, "None", "false", *PID);
-            # test PID creation
-            if((*PID == "empty") || (*PID == "None") || (*PID == "error")) {
-                logInfo("ingestObject-> ERROR while creating the PID for *source PID = *PID");
-                EUDATCreateAVU("ADMIN_Status", "ErrorPID", *source);
-            }
-            else {
-                logInfo("ingestObject-> PID created for *source PID = [*PID] ROR = [*RorValue]");
-                EUDATCreateAVU("ADMIN_Status", "Archive_ok", *source);
-                if (*protectArchive) {
-                    logInfo("ingestObject-> changing *source owner to = *archiveOwner with read access to$userNameClient");
-                    msiSetACL("default","read",$userNameClient,*source);
-                    msiSetACL("default","own",*archiveOwner,*source);
-                }
-            }
-        }
-        else
-        {
-            logInfo("ingestObject-> Checksum (*checksum) is different than original (*orig_checksum)");
-            EUDATCreateAVU("ADMIN_Status", "ErrorChecksum", *source);
-        }
-    }
+* EUDATCreatePID(*parent_pid, *path, *ror, *fio, *fixed, *newPID)
+parent_pid is the PID of the digital object that was replicated to us (not necessarily the ROR); path is the path of the object to store with the PID record; ror is the ROR PID of the digital object that we want to store; fio is the FIO PID of the digital object that we want to store; fixed is a boolean flag to define that the object related to this PID cannot change; and newPID is the pid generated for this object.
 
 * Do we also want to catch the errors in data transfer and checksum calculation?
 
