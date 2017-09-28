@@ -1,0 +1,6 @@
+[Service]
+# Verbosity of the logging system
+# Possible values are:
+# CRITICAL, ERROR, WARNING, INFO, DEBUG
+verbosity = INFO
+templatesdir = templates
