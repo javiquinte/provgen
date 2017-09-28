@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Provgen WS - prototype
 #
@@ -29,7 +29,6 @@
 import cherrypy
 import os
 import json
-# from dcmysql import Collection
 
 try:
     import configparser
@@ -38,44 +37,41 @@ except ImportError:
 
 version = '0.1a1'
 
-class IngestAPI(object):
-    """Object dispatching methods related to a data file ingestion."""
+class TemplatesAPI(object):
+    """Object dispatching methods related to templates."""
 
-    def __init__(self):
+    def __init__(self, directory):
         """Constructor of the IngestAPI class."""
-        pass
+        self.directory = directory
 
     @cherrypy.expose
-    def POST(self):
-        """Add a new data file.
+    def GET(self):
+        """List available templates in the system.
 
-        :returns: Metadata related to the new file in JSON format.
+        :returns: Metadata related to the available templates in JSON format.
         :rtype: string
         :raises: cherrypy.HTTPError
         """
-        jsonMemb = json.loads(cherrypy.request.body.fp.read())
-
-        # Read only the fields that we support
-        fullpath = jsonMemb.get('fullpath', None)
-        checksum = jsonMemb.get('checksum', None)
-
         try:
-            irodsfile = IrodsFile(fullpath)
+            templates = []
+            for (dirpath, dirnames, filenames) in os.walk(self.directory):
+                templates.extend(filenames)
+                break
         except:
             # Send Error 404
             messDict = {'code': 0,
-                        'message': 'Could not create the file %s !' % fullpath}
+                        'message': 'Could not read the list of available templates'}
             message = json.dumps(messDict)
             cherrypy.log(message, traceback=True)
             cherrypy.response.headers['Content-Type'] = 'application/json'
             raise cherrypy.HTTPError(404, message)
 
-        cherrypy.response.status = '201 File ingested (%s)' % fullpath
+        cherrypy.response.status = '200 OK'
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return irodsfile.toJSON()
+        return json.dumps(templates)
 
 
-class DataColl(object):
+class Provgen(object):
     """Main class including the dispatcher."""
 
     def __init__(self):
@@ -85,52 +81,20 @@ class DataColl(object):
         config.read(os.path.join(here, 'provgen.cfg'))
 
         # Read connection parameters
-        self.templates = config.get('Service', 'templatedir')
-
-        self.ingest = IngestAPI()
+        self.templates = TemplatesAPI(config.get('Service', 'templatedir'))
 
     def _cp_dispatch(self, vpath):
         if len(vpath):
             if vpath[0] in ("features", "version"):
                 return self
 
-            if vpath[0] == "collections":
-                # Replace "collections" with the request method (e.g. GET, PUT)
+            if vpath[0] == "templates":
+                # Replace "templates" with the request method (e.g. GET, PUT)
                 vpath[0] = cherrypy.request.method
 
                 # If there are no more terms to process
                 if len(vpath) < 2:
-                    return self.colls
-
-                # Remove the collection ID
-                cherrypy.request.params['collID'] = vpath.pop(1)
-                if len(vpath) > 1:
-                    # Remove a word and check that is "members"
-                    if vpath[1] not in ("members", "capabilities", "download"):
-                        raise cherrypy.HTTPError(400, 'Bad Request')
-
-                    if vpath[1] == "capabilities":
-                        vpath.pop(0)
-                        return self.coll
-
-                    if vpath[1] == "members":
-                        # Remove "members"
-                        vpath.pop(1)
-
-                        # Check if there are more parameters
-                        if len(vpath) > 1:
-                            cherrypy.request.params['memberID'] = vpath.pop(1)
-                            if (len(vpath) > 1) and (vpath[1] == "download"):
-                                vpath.pop(0)
-                            return self.member
-
-                        return self.members
-
-                    if vpath[1] == "download":
-                        vpath.pop(0)
-                        return self.coll
-
-                return self.coll
+                    return self.templates
 
         return vpath
 
@@ -159,4 +123,4 @@ class DataColl(object):
 
 
 if __name__ == "__main__":
-    cherrypy.quickstart(DataColl(), '/eudat/provgen')
+    cherrypy.quickstart(Provgen(), '/eudat/provgen')
