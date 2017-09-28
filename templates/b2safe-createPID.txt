@@ -1,0 +1,39 @@
+# Provenance regarding the creation of a PID for a given file
+# Parameters:
+# EUDAT_PARAM:timestamp - the time the PID was generated
+# EUDAT_PARAM:PID - the handle PID that was generated
+# EUDAT_PARAM:irods_path - the absolute path of the file in iRODS
+# EUDAT_PARAM:node - the domain name of the server where the node resides
+
+
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix datacite: <http://purl.org/spar/datacite/> .
+
+:EUDATCreatePID_at_{EUDAT_PARAM:timestamp}
+    a prov:Activity;
+    prov:endedAtTime 	"{EUDAT_PARAM:timestamp}";
+    prov:wasAssociatedWith 	:EUDATCreatePID;
+    prov:generates 	:{EUDAT_PARAM:PID};
+.
+
+:EUDATCreatePID
+    a prov:SoftwareAgent;
+    prov:atLocation https://github.com/EUDAT-B2SAFE/B2SAFE-core
+.
+
+:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
+    a prov:Entity;
+    rdfs:label "{EUDAT_PARAM:irods_path}"
+    prov:atLocation 	"{EUDAT_PARAM:node}";
+    datacite:hasIdentifier 	:{EUDAT_PARAM:PID};
+    prov:atLocation 	"{EUDAT_PARAM:irods_path}";
+.
+
+
+:{EUDAT_PARAM:PID}
+    a prov:Entity;
+    dc:identifier {EUDAT_PARAM:PID};
+    datacite:usesIdentifierScheme 	http://purl.org/spar/datacite/handle;
+.
