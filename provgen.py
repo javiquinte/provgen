@@ -81,7 +81,7 @@ class Provgen(object):
         config.read(os.path.join(here, 'provgen.cfg'))
 
         # Read connection parameters
-        self.templates = TemplatesAPI(config.get('Service', 'templatedir'))
+        self.templates = TemplatesAPI(config.get('Service', 'templatesdir'))
 
     def _cp_dispatch(self, vpath):
         if len(vpath):
