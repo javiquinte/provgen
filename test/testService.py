@@ -103,10 +103,30 @@ class ProvgenTests(unittest.TestCase):
 
         # Check that it is a version format supported by distutils.version
         try:
-            print(buffer.decode('utf-8'))
             StrictVersion(buffer.decode('utf-8'))
         except Exception as e:
             msg = 'Version number not supported by distutils.version!'
+            self.assertTrue(False, e)
+
+    def test_features(self):
+        """'features' method."""
+        if self.host.endswith('/'):
+            vermethod = '%sfeatures' % self.host
+        else:
+            raise Exception('Wrong service URL format. A / is expected as last character.')
+
+        req = Request(vermethod)
+        try:
+            u = urlopen(req)
+            buffer = u.read()
+        except:
+            raise Exception('Error retrieving features.')
+
+        # Check that it is a version format supported by distutils.version
+        try:
+            json.loads(buffer, encoding='utf-8')
+        except Exception as e:
+            msg = 'Features could not be read/parsed!'
             self.assertTrue(False, e)
 
 
