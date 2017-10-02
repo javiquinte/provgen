@@ -122,11 +122,32 @@ class ProvgenTests(unittest.TestCase):
         except:
             raise Exception('Error retrieving features.')
 
-        # Check that it is a version format supported by distutils.version
+        # Check that the object returned seems to be JSON
         try:
             json.loads(buffer, encoding='utf-8')
         except Exception as e:
             msg = 'Features could not be read/parsed!'
+            self.assertTrue(False, e)
+
+    def test_templates(self):
+        """'templates' method."""
+        if self.host.endswith('/'):
+            vermethod = '%stemplates' % self.host
+        else:
+            raise Exception('Wrong service URL format. A / is expected as last character.')
+
+        req = Request(vermethod)
+        try:
+            u = urlopen(req)
+            buffer = u.read()
+        except:
+            raise Exception('Error retrieving templates list.')
+
+        # Check that the object returned seems to be JSON and containing templates
+        try:
+            json.loads(buffer, encoding='utf-8')
+        except Exception as e:
+            msg = 'Templates could not be read/parsed!'
             self.assertTrue(False, e)
 
 
