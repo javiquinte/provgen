@@ -43,7 +43,18 @@ class TemplatesAPI(object):
         """Constructor of the IngestAPI class."""
         self.directory = directory
 
-    # @cherrypy.expose
+    def retrieve(self, template):
+        """Fill a template with the parameters passed.
+
+        :returns: Complete template in text plain format.
+        :rtype: string
+        :raises: FileNotFoundError
+        """
+
+        with open(self.directory + '/' + template + '.txt') as fin:
+            # Keep the specification in a list
+            return fin.read()
+
     def list(self):
         """List available templates in the system.
 
@@ -53,6 +64,7 @@ class TemplatesAPI(object):
         """
         try:
             templates = []
+            # TODO Filter out file names not ending with TXT
             for (dirpath, dirnames, filenames) in os.walk(self.directory):
                 templates.extend(filenames)
                 break
@@ -64,9 +76,6 @@ class TemplatesAPI(object):
             cherrypy.log(message, traceback=True)
             cherrypy.response.headers['Content-Type'] = 'application/json'
             raise cherrypy.HTTPError(404, message)
-
-        # cherrypy.response.status = '200 OK'
-        # cherrypy.response.headers['Content-Type'] = 'application/json'
 
         # Save the templates specification to be returned
         result = list()
@@ -121,15 +130,29 @@ class Provgen(object):
         return "provgen help should be presented here!"
 
     @cherrypy.expose
-    def templates(self):
+    def templates(self, *args, **kwargs):
         """Read the templates present in the system and return them in JSON format.
 
         :returns: Templates available in JSON format
         :rtype: string
         """
+        if not len(args):
+            cherrypy.response.header_list = [('Content-Type', 'application/json')]
+            return self.templatesAPI.list()
 
-        cherrypy.response.header_list = [('Content-Type', 'application/json')]
-        return self.templatesAPI.list()
+        cherrypy.response.header_list = [('Content-Type', 'text/plain')]
+        try:
+            result = self.templatesAPI.retrieve('/'.join(args))
+            return result
+        except FileNotFoundError:
+            # Send Error 404
+            messDict = {'code': 0,
+                        'message': 'Template %s could not be found.' %
+                                   '/'.join(args)}
+            message = json.dumps(messDict)
+            # cherrypy.log(message)
+            cherrypy.response.headers['Content-Type'] = 'application/json'
+            raise cherrypy.HTTPError(404, message)
 
     @cherrypy.expose
     def features(self):
