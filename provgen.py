@@ -43,8 +43,8 @@ class TemplatesAPI(object):
         """Constructor of the IngestAPI class."""
         self.directory = directory
 
-    @cherrypy.expose
-    def GET(self):
+    # @cherrypy.expose
+    def list(self):
         """List available templates in the system.
 
         :returns: Metadata related to the available templates in JSON format.
@@ -65,9 +65,26 @@ class TemplatesAPI(object):
             cherrypy.response.headers['Content-Type'] = 'application/json'
             raise cherrypy.HTTPError(404, message)
 
-        cherrypy.response.status = '200 OK'
-        cherrypy.response.headers['Content-Type'] = 'application/json'
-        return json.dumps(templates)
+        # cherrypy.response.status = '200 OK'
+        # cherrypy.response.headers['Content-Type'] = 'application/json'
+
+        # Save the templates specification to be returned
+        result = list()
+        for template in templates:
+            # Open template
+            with open(self.directory + '/' + template) as fin:
+                # Keep the specification in a list
+                docstring = list()
+                for line in fin.readlines():
+                    if line.startswith('#'):
+                        # Add all lines starting with #
+                        docstring.append(line[1:])
+                    else:
+                        # Break as soon as line doesn't start with #
+                        break
+                result.append({'name': template, 'doc': '\n'.join(docstring)})
+
+        return json.dumps(result)
 
 
 class Provgen(object):
@@ -80,22 +97,39 @@ class Provgen(object):
         config.read(os.path.join(here, 'provgen.cfg'))
 
         # Read connection parameters
-        self.templates = TemplatesAPI(config.get('Service', 'templatesdir'))
+        self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'))
 
-    def _cp_dispatch(self, vpath):
-        if len(vpath):
-            if vpath[0] in ("features", "version"):
-                return self
+    # def _cp_dispatch(self, vpath):
+    #     print(vpath)
+    #     if len(vpath):
+    #         if vpath[0] in ("templates", "features", "version"):
+    #             return self
+    #
+    #         if vpath[0] == "templates":
+    #             # Replace "templates" with the request method (e.g. GET, PUT)
+    #             vpath[0] = cherrypy.request.method
+    #
+    #             # If there are no more terms to process
+    #             if len(vpath) < 2:
+    #                 return self.templates
+    #
+    #     return vpath
 
-            if vpath[0] == "templates":
-                # Replace "templates" with the request method (e.g. GET, PUT)
-                vpath[0] = cherrypy.request.method
+    @cherrypy.expose
+    def index(self):
+        cherrypy.response.header_list = [('Content-Type', 'text/plain')]
+        return "provgen help should be presented here!"
 
-                # If there are no more terms to process
-                if len(vpath) < 2:
-                    return self.templates
+    @cherrypy.expose
+    def templates(self):
+        """Read the templates present in the system and return them in JSON format.
 
-        return vpath
+        :returns: Templates available in JSON format
+        :rtype: string
+        """
+
+        cherrypy.response.header_list = [('Content-Type', 'application/json')]
+        return self.templatesAPI.list()
 
     @cherrypy.expose
     def features(self):
