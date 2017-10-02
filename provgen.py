@@ -35,7 +35,6 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-version = '0.1a1'
 
 class TemplatesAPI(object):
     """Object dispatching methods related to templates."""
@@ -118,6 +117,7 @@ class Provgen(object):
         :returns: System capabilities in JSON format
         :rtype: string
         """
+        version = '0.1a1'
         cherrypy.response.header_list = [('Content-Type', 'text/plain')]
         return version
 
