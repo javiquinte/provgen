@@ -26,7 +26,7 @@ from urllib.request import urlopen
 from urllib.request import HTTPError
 from urllib.parse import urlparse
 import json
-from difflib import Differ
+from distutils.version import StrictVersion
 from xml.dom.minidom import parseString
 from unittestTools import WITestRunner
 
@@ -43,7 +43,7 @@ class ProvgenTests(unittest.TestCase):
         """Very large URI."""
         msg = 'A URI of more than 2000 characters is not allowed and ' + \
             'should return a 414 error code'
-        req = Request('%s?net=GE%s' % (self.host, '&net=GE' * 500))
+        req = Request('%stemplates?key=value%s' % (self.host, '&key=value' * 500))
         try:
             u = urlopen(req)
             u.read()
@@ -58,7 +58,7 @@ class ProvgenTests(unittest.TestCase):
         """Unknown parameter."""
         msg = 'An error code 400 Bad Request is expected for an unknown ' + \
             'parameter'
-        req = Request('%s?net=GE&wrongparam=1' % self.host)
+        req = Request('%stemplates?wrongparam=1' % self.host)
         try:
             u = urlopen(req)
             u.read()
@@ -101,18 +101,14 @@ class ProvgenTests(unittest.TestCase):
         except:
             raise Exception('Error retrieving version number')
 
-        # Check that it has three components (ints) separated by '.'
-        components = buffer.split('.')
-        msg = 'Version number does not include the three components'
-        self.assertEqual(len(components), 3, msg)
-
+        # Check that it is a version format supported by distutils.version
         try:
-            components = map(int, components)
-        except ValueError:
-            msg = 'Components of the version number seem not to be integers.'
-            self.assertEqual(1, 0, msg)
-        # Check for exact version
-        self.assertEqual(components, [1, 1, 0], 'Version is not 1.1.0 !')
+            print(buffer.decode('utf-8'))
+            StrictVersion(buffer.decode('utf-8'))
+        except Exception as e:
+            msg = 'Version number not supported by distutils.version!'
+            self.assertTrue(False, e)
+
 
 # ----------------------------------------------------------------------
 def usage():
