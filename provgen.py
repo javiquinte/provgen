@@ -43,17 +43,33 @@ class TemplatesAPI(object):
         """Constructor of the IngestAPI class."""
         self.directory = directory
 
-    def retrieve(self, template):
+    def retrieve(self, template, params):
         """Fill a template with the parameters passed.
 
         :returns: Complete template in text plain format.
         :rtype: string
-        :raises: FileNotFoundError
+        :raises: FileNotFoundError, BadRequest
         """
+
+        prefix = 'EUDAT_PARAM'
 
         with open(self.directory + '/' + template + '.txt') as fin:
             # Keep the specification in a list
-            return fin.read()
+            wholetemp = fin.read()
+            for key, value in params.items():
+                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), value)
+
+            # Check that all variables have been replaced
+
+            # Look for opening markup of variable
+            startvar = wholetemp.find('{%s:' % prefix)
+            if startvar >= 0:
+                # Look for closing markup of variable
+                endvar = wholetemp.find('}', startvar)
+                if endvar >= startvar:
+                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefix)+2:endvar+1])
+
+            return wholetemp
 
     def list(self):
         """List available templates in the system.
@@ -142,13 +158,21 @@ class Provgen(object):
 
         cherrypy.response.header_list = [('Content-Type', 'text/plain')]
         try:
-            result = self.templatesAPI.retrieve('/'.join(args))
+            result = self.templatesAPI.retrieve('/'.join(args), kwargs)
             return result
         except FileNotFoundError:
             # Send Error 404
             messDict = {'code': 0,
                         'message': 'Template %s could not be found.' %
                                    '/'.join(args)}
+            message = json.dumps(messDict)
+            # cherrypy.log(message)
+            cherrypy.response.headers['Content-Type'] = 'application/json'
+            raise cherrypy.HTTPError(404, message)
+        except Exception as e:
+            # Send Error 404
+            messDict = {'code': 0,
+                        'message': str(e)}
             message = json.dumps(messDict)
             # cherrypy.log(message)
             cherrypy.response.headers['Content-Type'] = 'application/json'
