@@ -1,12 +1,16 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
   version: 1.0.0
   title: Provgen API
   description: API specification of the Provgen service
-schemes:
-  - http
-host: rz-vm258.gfz-potsdam.de
-basePath: /eudat/provgen
+  contact:
+    name: Javier Quinteros
+    url: >-
+      http://www.gfz-potsdam.de/en/section/seismology/staff/profil/javier-quinteros/
+    email: javier@gfz-potsdam.de
+servers:
+  - url: 'http://rz-vm258.gfz-potsdam.de/eudat/provgen'
+    description: Development server at GEOFON
 paths:
   /version:
     get:
@@ -15,8 +19,10 @@ paths:
       responses:
         '200':
           description: Version of the code
-          schema:
-            type: string
+          content:
+            text/plain:
+              schema:
+                type: string
   /features:
     get:
       summary: Get features of the system
@@ -24,12 +30,14 @@ paths:
       responses:
         '200':
           description: Capabilities of the system
-          schema:
-            required:
-              - whatever
-            properties:
-              whatever:
-                type: string
+          content:
+            application/json:
+              schema:
+                required:
+                  - whatever
+                properties:
+                  whatever:
+                    type: string
   /templates:
     get:
       summary: Get list of templates available
@@ -37,55 +45,56 @@ paths:
       responses:
         '200':
           description: List of templates
-          schema:
-            type: array
-            items:
-              required:
-                - name
-                - doc
-              properties:
-                name:
-                  type: string
-                doc:
-                  type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                    - name
+                    - doc
+                  properties:
+                    name:
+                      type: string
+                    doc:
+                      type: string
         '204':
           description: No templates available.
   '/templates/{template}':
     get:
-      summary: Gets a template
+      summary: Gets a template identified by name
       description: Returns a single template
       parameters:
         - name: template
           in: path
           required: true
-          description: The template name
-          type: string
+          description: Name of the template
+          schema:
+            type: string
       responses:
         '200':
           description: A Template in Notation3 format
-          schema:
-            required:
-              - username
-            properties:
-              firstName:
+          content:
+            text/plain:
+              schema:
                 type: string
-              lastName:
-                type: string
-              username:
-                type: string
-        '400':
-          $ref: '#/responses/Standard400ErrorResponse'
-        '404':
+        '204':
           description: The Template does not exist.
-definitions:
-  Error:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-responses:
-  Standard400ErrorResponse:
-    description: Bad Request.
-    schema:
-      $ref: '#/definitions/Error'
+        '400':
+          $ref: '#/components/responses/Standard4XXErrorResponse'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  responses:
+    Standard4XXErrorResponse:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
