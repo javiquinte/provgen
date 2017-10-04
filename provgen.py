@@ -42,6 +42,7 @@ class TemplatesAPI(object):
     def __init__(self, directory):
         """Constructor of the IngestAPI class."""
         self.directory = directory
+        self.extension = 'tpl'
 
     def retrieve(self, template, params):
         """Fill a template with the parameters passed.
@@ -53,7 +54,7 @@ class TemplatesAPI(object):
 
         prefix = 'EUDAT_PARAM'
 
-        with open(self.directory + '/' + template + '.txt') as fin:
+        with open(self.directory + '/' + template + '.' + self.extension) as fin:
             # Keep the specification in a list
             wholetemp = fin.read()
             for key, value in params.items():
@@ -67,7 +68,7 @@ class TemplatesAPI(object):
                 # Look for closing markup of variable
                 endvar = wholetemp.find('}', startvar)
                 if endvar >= startvar:
-                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefix)+2:endvar+1])
+                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefix)+2:endvar])
 
             return wholetemp
 
@@ -80,8 +81,9 @@ class TemplatesAPI(object):
         """
         try:
             templates = []
-            # TODO Filter out file names not ending with TXT
             for (dirpath, dirnames, filenames) in os.walk(self.directory):
+                # Filter out files not ending with self.extension
+                filenames = [fi[:-len(self.extension)-1] for fi in filenames if fi.endswith('.' + self.extension)]
                 templates.extend(filenames)
                 break
         except:
@@ -97,7 +99,7 @@ class TemplatesAPI(object):
         result = list()
         for template in templates:
             # Open template
-            with open(self.directory + '/' + template) as fin:
+            with open(self.directory + '/' + template + '.' + self.extension) as fin:
                 # Keep the specification in a list
                 docstring = list()
                 for line in fin.readlines():
