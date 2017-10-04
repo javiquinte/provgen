@@ -172,13 +172,13 @@ class Provgen(object):
             cherrypy.response.headers['Content-Type'] = 'application/json'
             raise cherrypy.HTTPError(404, message)
         except Exception as e:
-            # Send Error 404
+            # Send Error 400
             messDict = {'code': 0,
                         'message': str(e)}
             message = json.dumps(messDict)
             # cherrypy.log(message)
             cherrypy.response.headers['Content-Type'] = 'application/json'
-            raise cherrypy.HTTPError(404, message)
+            raise cherrypy.HTTPError(400, message)
 
     @cherrypy.expose
     def features(self):
