@@ -204,4 +204,13 @@ class Provgen(object):
 
 
 if __name__ == "__main__":
-    cherrypy.quickstart(Provgen(), '/eudat/provgen')
+    server_config = {
+        'tools.proxy.on':True,
+        'server.socket_host': '127.0.0.1',
+        'server.socket_port': 8080,
+        'engine.autoreload_on': False
+    }
+
+    cherrypy.tree.mount(Provgen(), '/eudat/provgen')
+    cherrypy.config.update(server_config)
+    cherrypy.engine.start()
