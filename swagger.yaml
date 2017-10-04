@@ -1,0 +1,91 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Provgen API
+  description: API specification of the Provgen service
+schemes:
+  - http
+host: rz-vm258.gfz-potsdam.de
+basePath: /eudat/provgen
+paths:
+  /version:
+    get:
+      summary: Get version of the code
+      description: Returns a string specifying the version.
+      responses:
+        '200':
+          description: Version of the code
+          schema:
+            type: string
+  /features:
+    get:
+      summary: Get features of the system
+      description: Returns a set of attributes describing the capabilities of the system.
+      responses:
+        '200':
+          description: Capabilities of the system
+          schema:
+            required:
+              - whatever
+            properties:
+              whatever:
+                type: string
+  /templates:
+    get:
+      summary: Get list of templates available
+      description: Returns a list containing all templates available.
+      responses:
+        '200':
+          description: List of templates
+          schema:
+            type: array
+            items:
+              required:
+                - name
+                - doc
+              properties:
+                name:
+                  type: string
+                doc:
+                  type: string
+        '204':
+          description: No templates available.
+  '/templates/{template}':
+    get:
+      summary: Gets a template
+      description: Returns a single template
+      parameters:
+        - name: template
+          in: path
+          required: true
+          description: The template name
+          type: string
+      responses:
+        '200':
+          description: A Template in Notation3 format
+          schema:
+            required:
+              - username
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              username:
+                type: string
+        '400':
+          $ref: '#/responses/Standard400ErrorResponse'
+        '404':
+          description: The Template does not exist.
+definitions:
+  Error:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+responses:
+  Standard400ErrorResponse:
+    description: Bad Request.
+    schema:
+      $ref: '#/definitions/Error'
