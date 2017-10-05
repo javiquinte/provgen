@@ -206,10 +206,12 @@ class Provgen(object):
 
 
 server_config = {
-    'tools.proxy.on': True,
-    'server.socket_host': '127.0.0.1',
-    'server.socket_port': 8080,
-    'engine.autoreload_on': False
+    'global': {
+        'tools.proxy.on': True,
+    	'server.socket_host': '127.0.0.1',
+    	'server.socket_port': 8080,
+    	'engine.autoreload_on': False
+    }
 }
 cherrypy.tree.mount(Provgen(), '/eudat/provgen', server_config)
 
