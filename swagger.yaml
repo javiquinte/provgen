@@ -1,16 +1,18 @@
 openapi: 3.0.0
+
 info:
   version: 1.0.0
   title: Provgen API
   description: API specification of the Provgen service
   contact:
     name: Javier Quinteros
-    url: >-
-      http://www.gfz-potsdam.de/en/section/seismology/staff/profil/javier-quinteros/
+    url: http://www.gfz-potsdam.de/en/section/seismology/staff/profil/javier-quinteros/
     email: javier@gfz-potsdam.de
+
 servers:
   - url: 'http://rz-vm258.gfz-potsdam.de/eudat/provgen'
     description: Development server at GEOFON
+
 paths:
   /version:
     get:
@@ -23,6 +25,7 @@ paths:
             text/plain:
               schema:
                 type: string
+
   /features:
     get:
       summary: Get features of the system
@@ -38,6 +41,7 @@ paths:
                 properties:
                   whatever:
                     type: string
+
   /templates:
     get:
       summary: Get list of templates available
@@ -60,6 +64,7 @@ paths:
                       type: string
         '204':
           description: No templates available.
+
   '/templates/{template}':
     get:
       summary: Gets a template identified by name
@@ -75,13 +80,14 @@ paths:
         '200':
           description: A Template in Notation3 format
           content:
-            text/plain:
+            text/n3:
               schema:
                 type: string
         '204':
           description: The Template does not exist.
         '400':
           $ref: '#/components/responses/Standard4XXErrorResponse'
+
 components:
   schemas:
     Error:

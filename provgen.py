@@ -42,7 +42,7 @@ class TemplatesAPI(object):
     def __init__(self, directory):
         """Constructor of the IngestAPI class."""
         self.directory = directory
-        self.extension = 'tpl'
+        self.extension = 'n3'
 
     def retrieve(self, template, params):
         """Fill a template with the parameters passed.
