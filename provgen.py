@@ -158,7 +158,7 @@ class Provgen(object):
             cherrypy.response.header_list = [('Content-Type', 'application/json')]
             return self.templatesAPI.list()
 
-        cherrypy.response.header_list = [('Content-Type', 'text/plain')]
+        cherrypy.response.header_list = [('Content-Type', 'text/n3')]
         try:
             result = self.templatesAPI.retrieve('/'.join(args), kwargs)
             return result
