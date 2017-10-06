@@ -126,32 +126,29 @@ class Provgen(object):
         # Read connection parameters
         self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'))
 
-    # def _cp_dispatch(self, vpath):
-    #     print(vpath)
-    #     if len(vpath):
-    #         if vpath[0] in ("templates", "features", "version"):
-    #             return self
-    #
-    #         if vpath[0] == "templates":
-    #             # Replace "templates" with the request method (e.g. GET, PUT)
-    #             vpath[0] = cherrypy.request.method
-    #
-    #             # If there are no more terms to process
-    #             if len(vpath) < 2:
-    #                 return self.templates
-    #
-    #     return vpath
-
     @cherrypy.expose
     def index(self):
-        cherrypy.response.header_list = [('Content-Type', 'text/plain')]
-        return "provgen help should be presented here!"
+        cherrypy.response.header_list = [('Content-Type', 'text/html')]
+
+        # TODO Create an HTML page with a minimum documentation for a user
+        try:
+            with open('help.html') as fin:
+                texthelp = fin.read()
+        except:
+            texthelp = """<html>
+                            <head>Provgen - EUDAT</head>
+                            <body>
+                              Default help for the Provgen service (EUDAT).
+                            </body>
+                          </html>"""
+
+        return texthelp
 
     @cherrypy.expose
     def templates(self, *args, **kwargs):
-        """Read the templates present in the system and return them in JSON format.
+        """Get a template in Notation3 format or a list of templates (JSON).
 
-        :returns: Templates available in JSON format
+        :returns: Templates available in JSON format or a template with all variables replaced.
         :rtype: string
         """
         if not len(args):
@@ -216,8 +213,6 @@ server_config = {
 cherrypy.tree.mount(Provgen(), '/eudat/provgen', server_config)
 
 if __name__ == "__main__":
-    # cherrypy.tree.mount(Provgen(), '/eudat/provgen')
-    # cherrypy.config.update(server_config)
     cherrypy.engine.signals.subscribe()
     cherrypy.engine.start()
     cherrypy.engine.block()
