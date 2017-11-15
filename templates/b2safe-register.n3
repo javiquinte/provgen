@@ -1,0 +1,50 @@
+#Provenance to record the registration of a file in the iRODS ecosystem
+#Parameters:
+# EUDAT_PARAM:timestamp - time of the registration of the file
+# EUDAT_PARAM:irods_user - user running the register
+# EUDAT_PARAM:node - domain server name of the iRODS node
+# EUDAT_PARAM:irods_version - version of the iRODS software
+# EUDAT_PARAM:irods_path - path of the file within the node
+# EUDAT_PARAM:checksum_value - value of the checksum of the file
+# EUDAT_PARAM:checksum_algorithm - algorithm for the checksum
+
+
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix spdx: <https://spdx.org/rdf/terms/> .
+@prefix provgen: <http://provgen.eudat.eu/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+provgen:register_at_{EUDAT_PARAM:timestamp} 
+    a prov:Activity; 
+    rdfs:label "register"@en; 
+    prov:endedAtTime     "{EUDAT_PARAM:timestamp}";
+    prov:wasAssociatedWith     provgen:iRODS-register-file;
+    prov:wasAssociatedWith     provgen:{EUDAT_PARAM:irods_user}_at_{EUDAT_PARAM:node};
+    prov:generates     provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path};
+.
+        
+provgen:iRODS-register-file_{EUDAT_PARAM:irods_version} 
+    a prov:SoftwareAgent; 
+    rdfs:label "iRODS software agent"@en; 
+    prov:value     "version: {EUDAT_PARAM:irods_version}";
+.
+        
+provgen:{EUDAT_PARAM:irods_user}_at_{EUDAT_PARAM:node} 
+    a prov:Agent; 
+    rdfs:label "{EUDAT_PARAM:irods_user}"@en; 
+.
+        
+provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
+    a prov:Entity; 
+    prov:atLocation     "{EUDAT_PARAM:node}";
+    prov:atLocation     "{EUDAT_PARAM:irods_path}";
+    spdx:checksum     provgen:checksum_{EUDAT_PARAM:checksum_value};
+.
+        
+provgen:checksum_{EUDAT_PARAM:checksum_value}
+    a spdx:Checksum; 
+    spdx:checksumValue "{EUDAT_PARAM:checksum_value}"; 
+    spdx:algorithm     "{EUDAT_PARAM:checksum_algorithm}";
+.
+
