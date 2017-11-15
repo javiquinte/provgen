@@ -17,7 +17,7 @@ provgen:EUDATCreatePID_at_{EUDAT_PARAM:timestamp}
     a prov:Activity;
     prov:endedAtTime 	"{EUDAT_PARAM:timestamp}";
     prov:wasAssociatedWith 	provgen:EUDATCreatePID;
-    prov:generates 	provgen:{EUDAT_PARAM:PID};
+    prov:generated 	provgen:{EUDAT_PARAM:PID};
 .
 
 provgen:EUDATCreatePID
