@@ -128,7 +128,7 @@ class Provgen(object):
 
     @cherrypy.expose
     def index(self):
-        cherrypy.response.header_list = [('Content-Type', 'text/html')]
+        cherrypy.response.headers['Content-Type'] = 'text/html'
 
         # TODO Create an HTML page with a minimum documentation for a user
         try:
@@ -152,11 +152,11 @@ class Provgen(object):
         :rtype: string
         """
         if not len(args):
-            cherrypy.response.header_list = [('Content-Type', 'application/json')]
+            cherrypy.response.headers['Content-Type'] = 'application/json'
             return self.templatesAPI.list()
 
-        cherrypy.response.header_list = [('Content-Type', 'text/n3')]
         try:
+            cherrypy.response.headers['Content-Type'] = 'text/n3'
             result = self.templatesAPI.retrieve('/'.join(args), kwargs)
             return result
         except FileNotFoundError:
@@ -187,7 +187,7 @@ class Provgen(object):
         syscapab = {
                      "whatever": False,
                    }
-        cherrypy.response.header_list = [('Content-Type', 'application/json')]
+        cherrypy.response.headers['Content-Type'] = 'application/json'
         return json.dumps(syscapab)
 
     @cherrypy.expose
@@ -198,7 +198,7 @@ class Provgen(object):
         :rtype: string
         """
         version = '0.1a1'
-        cherrypy.response.header_list = [('Content-Type', 'text/plain')]
+        cherrypy.response.headers['Content-Type'] = 'text/plain'
         return version
 
 
