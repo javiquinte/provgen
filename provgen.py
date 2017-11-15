@@ -29,12 +29,15 @@
 import cherrypy
 import os
 import json
-import re
 
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
+
+
+def customescape(input):
+    return input.replace('/', '\/')
 
 
 class TemplatesAPI(object):
@@ -59,7 +62,7 @@ class TemplatesAPI(object):
             # Keep the specification in a list
             wholetemp = fin.read()
             for key, value in params.items():
-                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), re.escape(value))
+                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), customescape(value))
 
             # Check that all variables have been replaced
 
