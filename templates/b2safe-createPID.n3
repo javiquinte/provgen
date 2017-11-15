@@ -10,30 +10,32 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix datacite: <http://purl.org/spar/datacite/> .
+@prefix provgen: <http://provgen.eudat.eu/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-:EUDATCreatePID_at_{EUDAT_PARAM:timestamp}
+provgen:EUDATCreatePID_at_{EUDAT_PARAM:timestamp}
     a prov:Activity;
     prov:endedAtTime 	"{EUDAT_PARAM:timestamp}";
-    prov:wasAssociatedWith 	:EUDATCreatePID;
-    prov:generated 	:{EUDAT_PARAM:PID};
+    prov:wasAssociatedWith 	provgen:EUDATCreatePID;
+    prov:generated 	provgen:{EUDAT_PARAM:PID};
 .
 
-:EUDATCreatePID
+provgen:EUDATCreatePID
     a prov:SoftwareAgent;
-    prov:atLocation https://github.com/EUDAT-B2SAFE/B2SAFE-core
+    prov:atLocation <https://github.com/EUDAT-B2SAFE/B2SAFE-core>
 .
 
-:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
+provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
     a prov:Entity;
-    rdfs:label "{EUDAT_PARAM:irods_path}"
+    rdfs:label "{EUDAT_PARAM:irods_path}";
     prov:atLocation 	"{EUDAT_PARAM:node}";
-    datacite:hasIdentifier 	:{EUDAT_PARAM:PID};
+    datacite:hasIdentifier 	provgen:{EUDAT_PARAM:PID};
     prov:atLocation 	"{EUDAT_PARAM:irods_path}";
 .
 
 
-:{EUDAT_PARAM:PID}
+provgen:{EUDAT_PARAM:PID}
     a prov:Entity;
-    dc:identifier {EUDAT_PARAM:PID};
-    datacite:usesIdentifierScheme 	http://purl.org/spar/datacite/handle;
+    dct:identifier {EUDAT_PARAM:PID};
+    datacite:usesIdentifierScheme 	<http://purl.org/spar/datacite/handle>;
 .
