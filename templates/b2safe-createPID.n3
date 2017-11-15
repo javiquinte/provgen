@@ -36,6 +36,6 @@ provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
 
 provgen:{EUDAT_PARAM:PID}
     a prov:Entity;
-    dct:identifier {EUDAT_PARAM:PID};
+    dct:identifier "{EUDAT_PARAM:PID}";
     datacite:usesIdentifierScheme 	<http://purl.org/spar/datacite/handle>;
 .
