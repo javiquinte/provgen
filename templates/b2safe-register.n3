@@ -21,7 +21,7 @@ provgen:register_at_{EUDAT_PARAM:timestamp}
     prov:endedAtTime     "{EUDAT_PARAM:timestamp}";
     prov:wasAssociatedWith     provgen:iRODS-register-file;
     prov:wasAssociatedWith     provgen:{EUDAT_PARAM:irods_user}_at_{EUDAT_PARAM:node};
-    prov:generates     provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path};
+    prov:generated     provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path};
 .
         
 provgen:iRODS-register-file_{EUDAT_PARAM:irods_version} 
