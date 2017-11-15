@@ -29,6 +29,7 @@
 import cherrypy
 import os
 import json
+import re
 
 try:
     import configparser
@@ -58,7 +59,7 @@ class TemplatesAPI(object):
             # Keep the specification in a list
             wholetemp = fin.read()
             for key, value in params.items():
-                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), value)
+                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), re.escape(value))
 
             # Check that all variables have been replaced
 
