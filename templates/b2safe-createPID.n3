@@ -13,11 +13,11 @@
 @prefix provgen: <http://provgen.eudat.eu/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-provgen:EUDATCreatePID_at_{EUDAT_PARAM:timestamp}
+provgen:EUDATCreatePID_at_{EUDAT_LITERAL:timestamp}
     a prov:Activity;
-    prov:endedAtTime 	"{EUDAT_PARAM:timestamp}";
+    prov:endedAtTime 	"{EUDAT_LITERAL:timestamp}";
     prov:wasAssociatedWith 	provgen:EUDATCreatePID;
-    prov:generated 	provgen:{EUDAT_PARAM:PID};
+    prov:generated 	provgen:{EUDAT_LITERAL:PID};
 .
 
 provgen:EUDATCreatePID
@@ -25,17 +25,17 @@ provgen:EUDATCreatePID
     prov:atLocation <https://github.com/EUDAT-B2SAFE/B2SAFE-core>
 .
 
-provgen:{EUDAT_PARAM:node}{EUDAT_PARAM:irods_path}
+provgen:{EUDAT_PARAM:node}{EUDAT_ESCAPE:irods_path}
     a prov:Entity;
-    rdfs:label "{EUDAT_PARAM:irods_path}";
-    prov:atLocation 	"{EUDAT_PARAM:node}";
-    datacite:hasIdentifier 	provgen:{EUDAT_PARAM:PID};
-    prov:atLocation 	"{EUDAT_PARAM:irods_path}";
+    rdfs:label "{EUDAT_LITERAL:irods_path}";
+    prov:atLocation 	"{EUDAT_LITERAL:node}";
+    datacite:hasIdentifier 	provgen:{EUDAT_LITERAL:PID};
+    prov:atLocation 	"{EUDAT_LITERAL:irods_path}";
 .
 
 
-provgen:{EUDAT_PARAM:PID}
+provgen:{EUDAT_LITERAL:PID}
     a prov:Entity;
-    dct:identifier "{EUDAT_PARAM:PID}";
+    dct:identifier "{EUDAT_LITERAL:PID}";
     datacite:usesIdentifierScheme 	<http://purl.org/spar/datacite/handle>;
 .
