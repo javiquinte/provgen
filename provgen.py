@@ -56,13 +56,15 @@ class TemplatesAPI(object):
         :raises: FileNotFoundError, BadRequest
         """
 
-        prefix = 'EUDAT_PARAM'
+        prefixLit = 'EUDAT_LITERAL'
+        prefixEsc = 'EUDAT_ESCAPE'
 
         with open(self.directory + '/' + template + '.' + self.extension) as fin:
             # Keep the specification in a list
             wholetemp = fin.read()
             for key, value in params.items():
-                wholetemp = wholetemp.replace('{%s:%s}' % (prefix, key), customescape(value))
+                wholetemp = wholetemp.replace('{%s:%s}' % (prefixEsc, key), customescape(value))
+                wholetemp = wholetemp.replace('{%s:%s}' % (prefixLit, key), value)
 
             # Check that all variables have been replaced
 
