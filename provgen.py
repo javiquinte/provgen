@@ -69,12 +69,19 @@ class TemplatesAPI(object):
             # Check that all variables have been replaced
 
             # Look for opening markup of variable
-            startvar = wholetemp.find('{%s:' % prefix)
+            startvar = wholetemp.find('{%s:' % prefixLit)
             if startvar >= 0:
                 # Look for closing markup of variable
                 endvar = wholetemp.find('}', startvar)
                 if endvar >= startvar:
-                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefix)+2:endvar])
+                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefixLit)+2:endvar])
+
+            startvar = wholetemp.find('{%s:' % prefixEsc)
+            if startvar >= 0:
+                # Look for closing markup of variable
+                endvar = wholetemp.find('}', startvar)
+                if endvar >= startvar:
+                    raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefixEsc)+2:endvar])
 
             return wholetemp
 
