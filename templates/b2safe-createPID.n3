@@ -25,7 +25,7 @@ provgen:EUDATCreatePID
     prov:atLocation <https://github.com/EUDAT-B2SAFE/B2SAFE-core>
 .
 
-provgen:{EUDAT_PARAM:node}{EUDAT_ESCAPE:irods_path}
+provgen:{EUDAT_LITERAL:node}:{EUDAT_ESCAPE:irods_path}
     a prov:Entity;
     rdfs:label "{EUDAT_LITERAL:irods_path}";
     prov:atLocation 	"{EUDAT_LITERAL:node}";
