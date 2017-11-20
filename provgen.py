@@ -166,12 +166,12 @@ class Provgen(object):
         """
         if not len(args):
             cherrypy.response.headers['Content-Type'] = 'application/json'
-            return self.templatesAPI.list()
+            return self.templatesAPI.list().encode('utf-8')
 
         try:
             cherrypy.response.headers['Content-Type'] = 'text/n3'
             result = self.templatesAPI.retrieve('/'.join(args), kwargs)
-            return result
+            return result.encode('utf-8')
         except FileNotFoundError:
             # Send Error 404
             messDict = {'code': 0,
@@ -201,7 +201,7 @@ class Provgen(object):
                      "whatever": False,
                    }
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return json.dumps(syscapab)
+        return json.dumps(syscapab).encode('utf-8')
 
     @cherrypy.expose
     def version(self):
@@ -212,7 +212,7 @@ class Provgen(object):
         """
         version = '0.1a1'
         cherrypy.response.headers['Content-Type'] = 'text/plain'
-        return version
+        return version.encode('utf-8')
 
 
 server_config = {
