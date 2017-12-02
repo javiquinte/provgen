@@ -38,6 +38,8 @@ except ImportError:
 
 def customescape(input):
     input = input.replace('/', '\/')
+    input = input.replace('+', '\+')
+    input = input.replace('=', '\=')
     return input.replace('@', '\@')
 
 
