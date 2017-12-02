@@ -37,7 +37,8 @@ except ImportError:
 
 
 def customescape(input):
-    return input.replace('/', '\/')
+    input = input.replace('/', '\/')
+    return input.replace('@', '\@')
 
 
 class TemplatesAPI(object):
