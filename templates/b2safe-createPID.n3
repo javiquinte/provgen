@@ -29,12 +29,12 @@ provgen:{EUDAT_LITERAL:node}:{EUDAT_ESCAPE:irods_path}
     a prov:Entity;
     rdfs:label "{EUDAT_LITERAL:irods_path}";
     prov:atLocation 	"{EUDAT_LITERAL:node}";
-    datacite:hasIdentifier 	provgen:{EUDAT_LITERAL:PID};
+    datacite:hasIdentifier 	provgen:{EUDAT_ESCAPE:PID};
     prov:atLocation 	"{EUDAT_LITERAL:irods_path}";
 .
 
 
-provgen:{EUDAT_LITERAL:PID}
+provgen:{EUDAT_ESCAPE:PID}
     a prov:Entity;
     dct:identifier "{EUDAT_LITERAL:PID}";
     datacite:usesIdentifierScheme 	<http://purl.org/spar/datacite/handle>;
