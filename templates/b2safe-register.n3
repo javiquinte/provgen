@@ -16,34 +16,35 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 provgen:register_at_{EUDAT_LITERAL:timestamp}
-    a prov:Activity; 
-    rdfs:label "register"@en; 
+    a prov:Activity;
+    rdfs:label "register"@en;
     prov:endedAtTime     "{EUDAT_LITERAL:timestamp}";
     prov:wasAssociatedWith     provgen:iRODS-register-file;
     prov:wasAssociatedWith     provgen:{EUDAT_ESCAPE:irods_user}_at_{EUDAT_LITERAL:node};
     prov:generated     provgen:{EUDAT_LITERAL:node}{EUDAT_ESCAPE:irods_path};
 .
-        
+
 provgen:iRODS-register-file_{EUDAT_LITERAL:irods_version}
-    a prov:SoftwareAgent; 
+    a prov:Agent;
+    prov:type   prov:SoftwareAgent;
     rdfs:label "iRODS software agent"@en; 
     prov:value     "version: {EUDAT_LITERAL:irods_version}";
 .
-        
+
 provgen:{EUDAT_ESCAPE:irods_user}_at_{EUDAT_LITERAL:node}
     a prov:Agent; 
     rdfs:label "{EUDAT_LITERAL:irods_user}"@en;
 .
-        
+
 provgen:{EUDAT_LITERAL:node}{EUDAT_ESCAPE:irods_path}
-    a prov:Entity; 
+    a prov:Entity;
     prov:atLocation     "{EUDAT_LITERAL:node}";
     prov:atLocation     "{EUDAT_LITERAL:irods_path}";
     spdx:checksum     provgen:checksum_{EUDAT_ESCAPE:checksum_value};
 .
-        
+
 provgen:checksum_{EUDAT_ESCAPE:checksum_value}
-    a spdx:Checksum; 
+    a spdx:Checksum;
     spdx:checksumValue "{EUDAT_LITERAL:checksum_value}";
     spdx:algorithm     "{EUDAT_LITERAL:checksum_algorithm}";
 .
