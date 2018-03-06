@@ -29,7 +29,7 @@
 import cherrypy
 import os
 import json
-import prov
+import prov.model as prov
 
 try:
     import configparser
@@ -88,10 +88,8 @@ class TemplatesAPI(object):
                     raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefixEsc)+2:endvar])
 
             # Read record with pyprov and send it in Prov-JSON to ProvStore
-            doc1 = prov.Document()
-            print(doc1.get_provn())
+            doc1 = prov.ProvDocument()
             doc2 = doc1.deserialize(content=wholetemp, format='rdf', rdf_format='n3')
-            print(doc2.get_provn())
             return doc2.serialize()
 
     def list(self):
