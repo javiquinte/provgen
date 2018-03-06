@@ -8,14 +8,14 @@
 
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix time: <http://www.w3.org/2006/time#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix datacite: <http://purl.org/spar/datacite/> .
 @prefix provgen: <http://provgen.eudat.eu/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 provgen:EUDATCreatePID_at_{EUDAT_LITERAL:timestamp}
     a prov:Activity;
-    prov:endedAtTime 	"{EUDAT_LITERAL:timestamp}";
+    prov:endedAtTime 	"{EUDAT_LITERAL:timestamp}"^^xsd:dateTime;
     prov:wasAssociatedWith 	provgen:EUDATCreatePID;
     prov:generated 	provgen:{EUDAT_ESCAPE:PID};
 .
@@ -23,7 +23,7 @@ provgen:EUDATCreatePID_at_{EUDAT_LITERAL:timestamp}
 provgen:EUDATCreatePID
     a prov:Agent;
     prov:type   prov:SoftwareAgent;
-    prov:atLocation <https://github.com/EUDAT-B2SAFE/B2SAFE-core>
+    prov:atLocation <https://github.com/EUDAT-B2SAFE/B2SAFE-core>;
 .
 
 provgen:{EUDAT_LITERAL:node}:{EUDAT_ESCAPE:irods_path}
