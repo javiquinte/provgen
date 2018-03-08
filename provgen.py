@@ -30,6 +30,8 @@ import cherrypy
 import os
 import json
 import prov.model as prov
+from provstore.api import Api
+
 
 try:
     import configparser
@@ -47,10 +49,12 @@ def customescape(input):
 class TemplatesAPI(object):
     """Object dispatching methods related to templates."""
 
-    def __init__(self, directory):
+    def __init__(self, directory, user=None, apikey=None):
         """Constructor of the IngestAPI class."""
         self.directory = directory
         self.extension = 'n3'
+        self.user = user
+        self.apikey = apikey
 
     def retrieve(self, template, params):
         """Fill a template with the parameters passed.
@@ -88,9 +92,12 @@ class TemplatesAPI(object):
                     raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefixEsc)+2:endvar])
 
             # Read record with pyprov and send it in Prov-JSON to ProvStore
+            api = Api(username=self.user, api_key=self.apikey)
+
             doc1 = prov.ProvDocument()
             doc2 = doc1.deserialize(content=wholetemp, format='rdf', rdf_format='n3')
-            return doc2.serialize()
+            record = api.document.create(doc2, name="example.n3")
+            return record
 
     def list(self):
         """List available templates in the system.
@@ -143,8 +150,11 @@ class Provgen(object):
         here = os.path.dirname(__file__)
         config.read(os.path.join(here, 'provgen.cfg'))
 
+        user = config.get('ProvStore', 'user')
+        apikey = config.get('ProvStore', 'apikey')
         # Read connection parameters
-        self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'))
+        self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'),
+                                         username=user, api_key=apikey)
 
     @cherrypy.expose
     def index(self):
