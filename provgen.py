@@ -154,7 +154,7 @@ class Provgen(object):
         apikey = config.get('ProvStore', 'apikey')
         # Read connection parameters
         self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'),
-                                         username=user, api_key=apikey)
+                                         user=user, apikey=apikey)
 
     @cherrypy.expose
     def index(self):
