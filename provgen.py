@@ -32,12 +32,8 @@ import json
 import datetime
 import prov.model as prov
 from provstore.api import Api
-
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+from provstore.api import NotFoundException
+import configparser
 
 
 def customescape(input):
@@ -47,11 +43,36 @@ def customescape(input):
     return input.replace('@', '\@')
 
 
+class RecordsAPI(object):
+    def __init__(self, user=None, apikey=None):
+        """Constructor of the RecordsAPI class."""
+        self.user = user
+        self.apikey = apikey
+
+    @cherrypy.expose
+    def index(self, id):
+        # Read record with provstore.api and send it back to user in N3 format
+        api = Api(username=self.user, api_key=self.apikey)
+        result = ""
+        try:
+            if cherrypy.request.method == 'GET':
+                record = api.document.get(id)
+                result = record.prov.serialize(format='rdf', rdf_format='n3')
+
+            if cherrypy.request.method == 'DELETE':
+                api.delete_document(id)
+
+        except NotFoundException:
+            raise
+
+        return result
+
+
 class TemplatesAPI(object):
     """Object dispatching methods related to templates."""
 
     def __init__(self, directory, user=None, apikey=None):
-        """Constructor of the IngestAPI class."""
+        """Constructor of the TemplatesAPI class."""
         self.directory = directory
         self.extension = 'n3'
         self.user = user
@@ -158,6 +179,7 @@ class Provgen(object):
         apikey = self.config.get('ProvStore', 'apikey')
         self.templatesAPI = TemplatesAPI(self.config.get('Service', 'templatesdir'),
                                          user=user, apikey=apikey)
+        self.records = RecordsAPI(user=user, apikey=apikey)
 
     @cherrypy.expose
     def index(self):
