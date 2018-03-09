@@ -37,10 +37,10 @@ paths:
             application/json:
               schema:
                 required:
-                  - whatever
+                  - ProvStore
                 properties:
                   whatever:
-                    type: string
+                    type: boolean
 
   /templates:
     get:

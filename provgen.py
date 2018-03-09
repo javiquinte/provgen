@@ -29,11 +29,11 @@
 import cherrypy
 import os
 import json
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+import datetime
+import prov.model as prov
+from provstore.api import Api
+from provstore.api import NotFoundException
+import configparser
 
 
 def customescape(input):
@@ -43,18 +43,55 @@ def customescape(input):
     return input.replace('@', '\@')
 
 
+@cherrypy.popargs('id')
+class RecordsAPI(object):
+    def __init__(self, user=None, apikey=None):
+        """Constructor of the RecordsAPI class."""
+        self.user = user
+        self.apikey = apikey
+
+    @cherrypy.expose
+    def index(self, id):
+        # Read record with provstore.api and send it back to user in N3 format
+        api = Api(username=self.user, api_key=self.apikey)
+        result = ""
+        try:
+            id = int(id)
+            if cherrypy.request.method == 'GET':
+                record = api.document.get(id)
+                result = record.prov.serialize(format='rdf', rdf_format='n3')
+                cherrypy.response.headers['Content-Type'] = 'text/n3'
+
+            if cherrypy.request.method == 'DELETE':
+                api.delete_document(id)
+                cherrypy.response.headers['Content-Type'] = 'text/plain'
+
+        except NotFoundException:
+            # Send Error 404
+            messDict = {'code': 0,
+                        'message': 'Record not found: %i' % id}
+            message = json.dumps(messDict)
+            cherrypy.log(message)
+            cherrypy.response.headers['Content-Type'] = 'application/json'
+            raise cherrypy.HTTPError(404, message)
+
+        return result
+
+
 class TemplatesAPI(object):
     """Object dispatching methods related to templates."""
 
-    def __init__(self, directory):
-        """Constructor of the IngestAPI class."""
+    def __init__(self, directory, user=None, apikey=None):
+        """Constructor of the TemplatesAPI class."""
         self.directory = directory
         self.extension = 'n3'
+        self.user = user
+        self.apikey = apikey
 
     def retrieve(self, template, params):
         """Fill a template with the parameters passed.
 
-        :returns: Complete template in text plain format.
+        :returns: Details about the record created in JSON format.
         :rtype: string
         :raises: FileNotFoundError, BadRequest
         """
@@ -86,7 +123,15 @@ class TemplatesAPI(object):
                 if endvar >= startvar:
                     raise Exception('Missing variable: %s' % wholetemp[startvar+len(prefixEsc)+2:endvar])
 
-            return wholetemp
+            # Read record with pyprov and send it in Prov-JSON to ProvStore
+            api = Api(username=self.user, api_key=self.apikey)
+
+            doc1 = prov.ProvDocument()
+            doc2 = doc1.deserialize(content=wholetemp, format='rdf', rdf_format='n3')
+            record = api.document.create(doc2, name="example.n3")
+            return json.dumps({'id': record.id,
+                               'created_at': record.created_at,
+                               'url': record.url}, default=datetime.datetime.isoformat)
 
     def list(self):
         """List available templates in the system.
@@ -135,12 +180,16 @@ class Provgen(object):
 
     def __init__(self):
         """Constructor of the Provgen object."""
-        config = configparser.RawConfigParser()
+        self.config = configparser.RawConfigParser()
         here = os.path.dirname(__file__)
-        config.read(os.path.join(here, 'provgen.cfg'))
+        self.config.read(os.path.join(here, 'provgen.cfg'))
 
         # Read connection parameters
-        self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'))
+        user = self.config.get('ProvStore', 'user')
+        apikey = self.config.get('ProvStore', 'apikey')
+        self.templatesAPI = TemplatesAPI(self.config.get('Service', 'templatesdir'),
+                                         user=user, apikey=apikey)
+        self.records = RecordsAPI(user=user, apikey=apikey)
 
     @cherrypy.expose
     def index(self):
@@ -172,7 +221,7 @@ class Provgen(object):
             return self.templatesAPI.list().encode('utf-8')
 
         try:
-            cherrypy.response.headers['Content-Type'] = 'text/n3'
+            cherrypy.response.headers['Content-Type'] = 'application/json'
             result = self.templatesAPI.retrieve('/'.join(args), kwargs)
             return result.encode('utf-8')
         except FileNotFoundError:
@@ -201,7 +250,7 @@ class Provgen(object):
         :rtype: string
         """
         syscapab = {
-                     "whatever": False,
+                     "ProvStore": self.config.has_section('ProvStore'),
                    }
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return json.dumps(syscapab).encode('utf-8')
