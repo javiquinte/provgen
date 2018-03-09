@@ -17,6 +17,9 @@ any later version.
 .. moduleauthor:: Javier Quinteros <javier@gfz-potsdam.de>, GEOFON, GFZ Potsdam
 """
 
+# TODO Include a test where a record is created
+# http://127.0.0.1:8080/eudat/provgen/templates/b2safe-createPID?timestamp=2017-01-01&PID=somepid&irods_path=/home/javier/delete.me&node=localhost
+
 import sys
 import os
 import datetime
