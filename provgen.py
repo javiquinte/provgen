@@ -43,6 +43,7 @@ def customescape(input):
     return input.replace('@', '\@')
 
 
+@cherrypy.popargs('id')
 class RecordsAPI(object):
     def __init__(self, user=None, apikey=None):
         """Constructor of the RecordsAPI class."""
@@ -55,15 +56,24 @@ class RecordsAPI(object):
         api = Api(username=self.user, api_key=self.apikey)
         result = ""
         try:
+            id = int(id)
             if cherrypy.request.method == 'GET':
                 record = api.document.get(id)
                 result = record.prov.serialize(format='rdf', rdf_format='n3')
+                cherrypy.response.headers['Content-Type'] = 'text/n3'
 
             if cherrypy.request.method == 'DELETE':
                 api.delete_document(id)
+                cherrypy.response.headers['Content-Type'] = 'text/plain'
 
         except NotFoundException:
-            raise
+            # Send Error 404
+            messDict = {'code': 0,
+                        'message': 'Record not found: %i' % id}
+            message = json.dumps(messDict)
+            cherrypy.log(message)
+            cherrypy.response.headers['Content-Type'] = 'application/json'
+            raise cherrypy.HTTPError(404, message)
 
         return result
 
