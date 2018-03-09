@@ -29,6 +29,7 @@
 import cherrypy
 import os
 import json
+import datetime
 import prov.model as prov
 from provstore.api import Api
 
@@ -59,7 +60,7 @@ class TemplatesAPI(object):
     def retrieve(self, template, params):
         """Fill a template with the parameters passed.
 
-        :returns: Complete template in text plain format.
+        :returns: Details about the record created in JSON format.
         :rtype: string
         :raises: FileNotFoundError, BadRequest
         """
@@ -97,7 +98,9 @@ class TemplatesAPI(object):
             doc1 = prov.ProvDocument()
             doc2 = doc1.deserialize(content=wholetemp, format='rdf', rdf_format='n3')
             record = api.document.create(doc2, name="example.n3")
-            return record
+            return json.dumps({'id': record.id,
+                               'created_at': record.created_at,
+                               'url': record.url}, default=datetime.datetime.isoformat)
 
     def list(self):
         """List available templates in the system.
@@ -150,9 +153,9 @@ class Provgen(object):
         here = os.path.dirname(__file__)
         self.config.read(os.path.join(here, 'provgen.cfg'))
 
+        # Read connection parameters
         user = self.config.get('ProvStore', 'user')
         apikey = self.config.get('ProvStore', 'apikey')
-        # Read connection parameters
         self.templatesAPI = TemplatesAPI(self.config.get('Service', 'templatesdir'),
                                          user=user, apikey=apikey)
 
@@ -186,7 +189,7 @@ class Provgen(object):
             return self.templatesAPI.list().encode('utf-8')
 
         try:
-            cherrypy.response.headers['Content-Type'] = 'text/n3'
+            cherrypy.response.headers['Content-Type'] = 'application/json'
             result = self.templatesAPI.retrieve('/'.join(args), kwargs)
             return result.encode('utf-8')
         except FileNotFoundError:
