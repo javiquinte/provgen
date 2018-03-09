@@ -146,14 +146,14 @@ class Provgen(object):
 
     def __init__(self):
         """Constructor of the Provgen object."""
-        config = configparser.RawConfigParser()
+        self.config = configparser.RawConfigParser()
         here = os.path.dirname(__file__)
-        config.read(os.path.join(here, 'provgen.cfg'))
+        self.config.read(os.path.join(here, 'provgen.cfg'))
 
-        user = config.get('ProvStore', 'user')
-        apikey = config.get('ProvStore', 'apikey')
+        user = self.config.get('ProvStore', 'user')
+        apikey = self.config.get('ProvStore', 'apikey')
         # Read connection parameters
-        self.templatesAPI = TemplatesAPI(config.get('Service', 'templatesdir'),
+        self.templatesAPI = TemplatesAPI(self.config.get('Service', 'templatesdir'),
                                          user=user, apikey=apikey)
 
     @cherrypy.expose
@@ -215,7 +215,7 @@ class Provgen(object):
         :rtype: string
         """
         syscapab = {
-                     "whatever": False,
+                     "ProvStore": self.config.has_section('ProvStore'),
                    }
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return json.dumps(syscapab).encode('utf-8')
