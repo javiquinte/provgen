@@ -1,0 +1,86 @@
+#Provenance to record the replication of a file in the iRODS ecosystem
+#Parameters:
+# EUDAT_PARAM:source_node - domain server name of the iRODS node where the source file is
+# EUDAT_PARAM:source_irods_path - path of the source file within the node
+# EUDAT_PARAM:dest_node - domain server name of the iRODS node where the replicated file is
+# EUDAT_PARAM:dest_irods_path - path of the replicated file within the node
+# EUDAT_PARAM:dest_PID - the handle of the replicated file
+# EUDAT_PARAM:source_PID - the handle of the source file
+# EUDAT_PARAM:timestamp - time of the replication of the file
+# EUDAT_PARAM:irods_user - user running the register
+# EUDAT_PARAM:irods_version - version of the iRODS software
+# EUDAT_PARAM:checksum_value - value of the checksum of the file
+# EUDAT_PARAM:checksum_algorithm - algorithm for the checksum
+
+
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix datacite: <http://purl.org/spar/datacite/> .
+@prefix provgen: <http://provgen.eudat.eu/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix spdx: <https://spdx.org/rdf/terms/> .
+
+provgen:{EUDAT_LITERAL:source_node}:{EUDAT_ESCAPE:source_irods_path}
+    a prov:Entity; 
+    rdfs:label "original"@en; 
+    prov:atLocation     "{EUDAT_LITERAL:source_node}";
+    prov:atLocation     "{EUDAT_LITERAL:source_irods_path}";
+    datacite:hasIdentifier     "provgen:{EUDAT_LITERAL:source_PID}";
+.        
+
+provgen:{EUDAT_LITERAL:dest_node}:{EUDAT_ESCAPE:dest_irods_path}
+    a prov:Entity; 
+    rdfs:label "replica"@en; 
+    prov:alternateOf     provgen:{EUDAT_LITERAL:source_node}:{EUDAT_ESCAPE:source_irods_path};
+    prov:atLocation     "{EUDAT_LITERAL:dest_node}";
+    datacite:hasIdentifier     "provgen:{EUDAT_LITERAL:dest_PID}";
+    prov:atLocation     "{EUDAT_LITERAL:dest_irods_path}";
+    spdx:checksum     provgen:checksum_{EUDAT_LITERAL:checksum_value};            
+.
+        
+provgen:iRODS_replicate_file_{EUDAT_LITERAL:irods_version} 
+    a prov:Agent;
+    prov:type   prov:SoftwareAgent;
+    rdfs:label "iRODS software agent"@en; 
+    prov:value     "version: {EUDAT_LITERAL:irods_version}";
+.
+        
+provgen:{EUDAT_LITERAL:irods_user}_at_{EUDAT_LITERAL:source_node} 
+    a prov:Agent; 
+    rdfs:label "{EUDAT_LITERAL:irods_user}"@en; 
+.       
+
+provgen:replicate_at_{EUDAT_LITERAL:timestamp} 
+    a prov:Activity; 
+    rdfs:label "replicate"@en; 
+    prov:used     provgen:{EUDAT_LITERAL:source_node}:{EUDAT_ESCAPE:source_irods_path};
+    prov:generated     provgen:{EUDAT_LITERAL:dest_node}:{EUDAT_ESCAPE:dest_irods_path};
+    prov:wasAssociatedWith     provgen:iRODS-replicate-file_{EUDAT_LITERAL:irods_version};
+    prov:endedAtTime     "{EUDAT_LITERAL:timestamp}"^^xsd:dateTime;
+    prov:wasEndedBy     provgen:replicate_exit_code_{EUDAT_LITERAL:exit_code};            
+.     
+
+provgen:{EUDAT_LITERAL:dest_PID} 
+    a prov:Entity; 
+    rdfs:label "{EUDAT_LITERAL:dest_PID}"; 
+    datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
+.
+
+provgen:{EUDAT_LITERAL:source_PID} 
+    a prov:Entity; 
+    rdfs:label "{EUDAT_LITERAL:source_PID}"; 
+    datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
+.
+                
+provgen:replicate_exit_code_{EUDAT_LITERAL:exit_code}
+    a prov:Entity; 
+    rdfs:label "exit code: {EUDAT_LITERAL:exit_code}"@en;             
+.        
+
+provgen:checksum_{EUDAT_LITERAL:checksum_value} 
+    a spdx:Checksum; 
+    spdx:algorithm     "{EUDAT_LITERAL:checksum_algorithm}";
+    spdx:checksumValue     "{EUDAT_LITERAL:checksum_value}";
+.
+
