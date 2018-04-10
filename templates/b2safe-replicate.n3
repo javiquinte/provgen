@@ -11,6 +11,7 @@
 # EUDAT_PARAM:irods_version - version of the iRODS software
 # EUDAT_PARAM:checksum_value - value of the checksum of the file
 # EUDAT_PARAM:checksum_algorithm - algorithm for the checksum
+# EUDAT_PARAN:exit_code - the exit-code of the calling replicate-functionality (i.e. is the file successfully replicated?)
 
 
 @prefix prov: <http://www.w3.org/ns/prov#> .
