@@ -39,7 +39,7 @@ provgen:{EUDAT_LITERAL:dest_node}:{EUDAT_ESCAPE:dest_irods_path}
     spdx:checksum     provgen:checksum_{EUDAT_LITERAL:checksum_value};            
 .
         
-provgen:iRODS_replicate_file_{EUDAT_LITERAL:irods_version} 
+provgen:iRODS_replicate_file_{EUDAT_ESCAPE:irods_version}
     a prov:Agent;
     prov:type   prov:SoftwareAgent;
     rdfs:label "iRODS software agent"@en; 
@@ -61,13 +61,13 @@ provgen:replicate_at_{EUDAT_LITERAL:timestamp}
     prov:wasEndedBy     provgen:replicate_exit_code_{EUDAT_LITERAL:exit_code};            
 .     
 
-provgen:{EUDAT_LITERAL:dest_PID} 
+provgen:{EUDAT_ESCAPE:dest_PID}
     a prov:Entity; 
     rdfs:label "{EUDAT_LITERAL:dest_PID}"; 
     datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
 .
 
-provgen:{EUDAT_LITERAL:source_PID} 
+provgen:{EUDAT_ESCAPE:source_PID}
     a prov:Entity; 
     rdfs:label "{EUDAT_LITERAL:source_PID}"; 
     datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
@@ -79,7 +79,8 @@ provgen:replicate_exit_code_{EUDAT_LITERAL:exit_code}
 .        
 
 provgen:checksum_{EUDAT_LITERAL:checksum_value} 
-    a spdx:Checksum; 
+    a prov:Entity;
+    a spdx:Checksum;
     spdx:algorithm     "{EUDAT_LITERAL:checksum_algorithm}";
     spdx:checksumValue     "{EUDAT_LITERAL:checksum_value}";
 .
