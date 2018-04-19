@@ -153,7 +153,7 @@ class TemplatesAPI(object):
             messDict = {'code': 0,
                         'message': 'Could not read the list of available templates'}
             message = json.dumps(messDict)
-            cherrypy.log(message, traceback=True)
+            cherrypy.log(message)
             cherrypy.response.headers['Content-Type'] = 'application/json'
             raise cherrypy.HTTPError(404, message)
 
