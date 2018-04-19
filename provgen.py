@@ -263,7 +263,7 @@ class Provgen(object):
         :returns: System capabilities in JSON format
         :rtype: string
         """
-        version = '0.1a1'
+        version = '0.1'
         cherrypy.response.headers['Content-Type'] = 'text/plain'
         return version.encode('utf-8')
 
