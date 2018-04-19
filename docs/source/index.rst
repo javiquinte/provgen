@@ -10,6 +10,8 @@ Welcome to provgen's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. warning:: This version of documentation does not contain any reference to the Dockerized version of the code.
+
 Installation
 ============
 
@@ -44,10 +46,27 @@ B2SAFE functions
 
 The following B2SAFE functions could be modified to collect and store Provenance information.
 
-1. EUDATiCHECKSUMretrieve(path, checksum, modtime): Set the checksum if needed and update the timestamp of the modification also. Three things are available: the full path of the file, the final checksum and the modification time of the checksum. We also know if the checksum has been updated or just read. The latter should not produce any provenance information.
-1. EUDATReplication(source, destination, registered, recursive, response): Replicate the source to the destination. The parameter registered determines whether the file has a PID which needs to be updated or not. Variable response contains a string with the result of the operation.
-1. EUDATPIDRegistration(source, destination, notification, registration_response): Verify that a PID exist for a given path and optionally create it if not found.
-1. EUDATCreatePID(parent_pid, path, ror, fio, fixed, newPID): parent_pid is the PID of the digital object that was replicated to us (not necessarily the ROR); path is the path of the object to store with the PID record; ror is the ROR PID of the digital object that we want to store; fio is the FIO PID of the digital object that we want to store; fixed is a boolean flag to define that the object related to this PID cannot change; and newPID is the pid generated for this object.
+EUDATiCHECKSUMretrieve
+--------------------------
+
+EUDATiCHECKSUMretrieve(path, checksum, modtime): 
+Set the checksum if needed and update the timestamp of the modification also. Three things are available: the full path of the file, the final checksum and the modification time of the checksum. We also know if the checksum has been updated or just read. The latter should not produce any provenance information.
+
+EUDATReplication
+----------------
+EUDATReplication(source, destination, registered, recursive, response): 
+Replicate the source to the destination. The parameter registered determines whether the file has a PID which needs to be updated or not. Variable response contains a string with the result of the operation.
+
+EUDATPIDRegistration
+--------------------
+EUDATPIDRegistration(source, destination, notification, registration_response): 
+Verify that a PID exist for a given path and optionally create it if not found.
+
+EUDATCreatePID
+--------------
+EUDATCreatePID(parent_pid, path, ror, fio, fixed, newPID): 
+parent_pid is the PID of the digital object that was replicated to us (not necessarily the ROR); path is the path of the object to store with the PID record; ror is the ROR PID of the digital object that we want to store; fio is the FIO PID of the digital object that we want to store; fixed is a boolean flag to define that the object related to this PID cannot change; and newPID is the pid generated for this object.
+
 1. Do we also want to catch the errors in data transfer and checksum calculation?
 
 Indices and tables

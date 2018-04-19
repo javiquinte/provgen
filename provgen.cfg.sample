@@ -4,3 +4,10 @@
 # CRITICAL, ERROR, WARNING, INFO, DEBUG
 verbosity = INFO
 templatesdir = templates
+
+# A free account in ProvStore should be opened
+# and an API key created. Copy/paste these two items
+# here and the records will be saved under that user.
+[ProvStore]
+user = username-at-ProvStore
+apikey = xxxxxxxxxxxxxxxxxxxxx

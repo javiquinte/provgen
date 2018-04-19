@@ -27,6 +27,7 @@
 
 
 import cherrypy
+# from cherrypy.process import plugins
 import os
 import json
 import datetime
@@ -267,17 +268,41 @@ class Provgen(object):
         return version.encode('utf-8')
 
 
-server_config = {
-    'global': {
-        'tools.proxy.on': True,
-    	'server.socket_host': '127.0.0.1',
-    	'server.socket_port': 8080,
-    	'engine.autoreload_on': False
+def main():
+    server_config = {
+        'global': {
+            'tools.proxy.on': True,
+            'server.socket_host': '0.0.0.0',
+            'server.socket_port': 8000,
+            'engine.autoreload_on': False
+        }
     }
-}
-cherrypy.tree.mount(Provgen(), '/eudat/provgen', server_config)
 
-if __name__ == "__main__":
+    # Update the global CherryPy configuration
+    cherrypy.config.update(server_config)
+    # if args.daemon:
+    #     cherrypy.tree.mount(Provgen(), '/eudat/provgen')
+    #
+    #     plugins.Daemonizer(cherrypy.engine).subscribe()
+    #     if hasattr(cherrypy.engine, 'signal_handler'):
+    #         cherrypy.engine.signal_handler.subscribe()
+    #     if hasattr(cherrypy.engine, 'console_control_handler'):
+    #         cherrypy.engine.console_control_handler.subscribe()
+    #
+    #     # Always start the engine; this will start all other services
+    #     try:
+    #         cherrypy.engine.start()
+    #     except Exception:
+    #         # Assume the error has been logged already via bus.log.
+    #         raise
+    #     else:
+    #         cherrypy.engine.block()
+    # else:
+    cherrypy.tree.mount(Provgen(), '/eudat/provgen')
     cherrypy.engine.signals.subscribe()
     cherrypy.engine.start()
     cherrypy.engine.block()
+
+
+if __name__ == "__main__":
+    main()

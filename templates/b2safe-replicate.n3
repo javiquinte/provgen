@@ -11,6 +11,7 @@
 # EUDAT_PARAM:irods_version - version of the iRODS software
 # EUDAT_PARAM:checksum_value - value of the checksum of the file
 # EUDAT_PARAM:checksum_algorithm - algorithm for the checksum
+# EUDAT_PARAM:exit_code - the exit-code of the calling replicate-functionality (i.e. is the file successfully replicated?)
 
 
 @prefix prov: <http://www.w3.org/ns/prov#> .
@@ -42,7 +43,7 @@ provgen:{EUDAT_LITERAL:dest_node}:{EUDAT_ESCAPE:dest_irods_path}
 provgen:iRODS_replicate_file_{EUDAT_ESCAPE:irods_version}
     a prov:Agent;
     prov:type   prov:SoftwareAgent;
-    rdfs:label "iRODS software agent"@en; 
+    rdfs:label "iRODS software agent"@en;
     prov:value     "version: {EUDAT_LITERAL:irods_version}";
 .
         
@@ -62,13 +63,13 @@ provgen:replicate_at_{EUDAT_LITERAL:timestamp}
 .     
 
 provgen:{EUDAT_ESCAPE:dest_PID}
-    a prov:Entity; 
+    a prov:Entity;
     rdfs:label "{EUDAT_LITERAL:dest_PID}"; 
     datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
 .
 
 provgen:{EUDAT_ESCAPE:source_PID}
-    a prov:Entity; 
+    a prov:Entity;
     rdfs:label "{EUDAT_LITERAL:source_PID}"; 
     datacite:usesIdentifierScheme     <http://purl.org/spar/datacite/handle>;            
 .

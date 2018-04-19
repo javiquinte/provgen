@@ -68,7 +68,7 @@ paths:
   '/templates/{template}':
     get:
       summary: Gets a template identified by name
-      description: Returns a single template
+      description: Create a provenance record and save it in ProvStore
       parameters:
         - name: template
           in: path
@@ -78,11 +78,11 @@ paths:
             type: string
       responses:
         '200':
-          description: A Template in Notation3 format
+          description: The ID of the record
           content:
-            text/n3:
+            text/plain:
               schema:
-                type: string
+                type: integer
         '204':
           description: The Template does not exist.
         '400':
